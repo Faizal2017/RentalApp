@@ -1,8 +1,9 @@
-import './globals.css';
-import Navbar from '@/components/Navbar';
+import "./globals.css";
+import Navbar from "../components/Navbar";
+import Footer from "@/components/Footer";
 export const metadata = {
-  title: 'Rental App',
-  description: 'A rental application built with Next.js and Tailwind CSS',
+  title: "Rental App",
+  description: "A rental application built with Next.js and Tailwind CSS",
 };
 
 export default function RootLayout({ children }) {
@@ -10,8 +11,10 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <head />
       <body className="min-h-screen bg-gray-100">
-      <Navbar/>
-        <main >{children}</main>
+        <Navbar />
+        <main>{children}</main>
+        <Footer/>
+
       </body>
     </html>
   );

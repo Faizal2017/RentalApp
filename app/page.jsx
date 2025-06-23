@@ -1,4 +1,5 @@
-import Link from "next/link";
+import InforBoxes from "@/components/InforBoxes";
+import Hero from "@/components/Hero";
 
 export const metadata = {
   title: 'Homepage',
@@ -7,9 +8,9 @@ export const metadata = {
 
 export default function Homepage() {
   return (
-    <div>
-      <h1 className="text-red-500">This is home page</h1>
-      <Link className="text-3xl text-blue-500" href="/properties/id">Go to properties</Link>
-    </div>
+    <>
+     <Hero/>
+     <InforBoxes/>
+    </>
   );
 };
