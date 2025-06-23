@@ -8,7 +8,8 @@ const page = () => {
 
   const router = useRouter();
   const {id} = useParams();
-  const query = useSearchParams()
+  const query = useSearchParams();
+  
 
   const name = query.get('name');
   return (
