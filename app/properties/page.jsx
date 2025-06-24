@@ -1,21 +1,24 @@
-'use client';
+"use client";
+import React from "react";
+import Properties from "@/properties";
+import PropertyCard from "@/components/PropertyCard";
+const page = () => {
+  return (
+    <section className="px-4 py-6">
+      <div className="container-xl lg:container m-auto px-4 py-6">
+        {Properties.length === 0 ? (
+          <div>No properties found</div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {" "}
+            {Properties.map((property) => (
+              <PropertyCard key={property._id} property={property} />
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+};
 
-import Link from 'next/link';
-import{useRouter, useSearchParams, useParams} from 'next/navigation';
-
-const Propertiespage = () => {
-
-  const router = useRouter();
-  const {id} = useParams();
-  const query = useSearchParams();
-  const name = query.get('name');
-
-    return (
-    <div className="p-2"><h1 className=" text-3xl text-red-500">This is Property</h1>
-    <button onClick={()=> router.push('/')} className="bg-red-400">Clickme</button>
-    <h1> HEllo {id}</h1>
-</div>
-  )
-}
-
-export default Propertiespage
+export default page;

@@ -1,3 +1,4 @@
+'use client';
 import React from "react";
 import Properties from '@/properties';
 import PropertyCard from "@/components/PropertyCard";
@@ -8,9 +9,9 @@ const page = () => {
         {Properties.length === 0 ? (
           <div>No properties found</div>
         ) : (
-          <div className="grid grid-cols-5 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             {Properties.map((property) => (
-              <PropertyCard key={property._id} property={Properties}/>
+              <PropertyCard key={property._id} property={property}/>
             ))}
           </div>
         )}

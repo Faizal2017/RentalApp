@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "cloudinary": "^2.2.0",
+    "lucide-react": "^0.523.0",
     "mapbox-gl": "^3.5.1",
     "mongodb": "^6.8.0",
     "mongoose": "^8.5.0",
@@ -34,6 +35,5 @@
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.10"
-    
   }
 }
