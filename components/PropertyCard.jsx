@@ -88,7 +88,7 @@ const PropertyCard = ({ property }) => {
             <span className="font-medium text-sm sm:text-base text-gray-700">{property.location.city}, {property.location.state}</span>
           </div>
           <Link
-            href={`/property/${property._id}`}
+            href={`/properties/${property._id}`}
             className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-semibold transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 min-w-[90px] sm:min-w-[100px] text-center"
           >
             Details
