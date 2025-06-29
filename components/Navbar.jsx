@@ -10,11 +10,14 @@ import { FaGoogle } from "react-icons/fa";
 import { getProviders, signIn, signOut, useSession } from "next-auth/react";
 
 const navbar = () => {
+  // Get the current session(user Deatils)
   const { data: session } = useSession();
 
   const [isMobileMenuOpen, setMobileMenu] = useState(false);
   const [profileButton, setProfileOpen] = useState(false);
   const [providers, setProviders] = useState(null);
+
+  const profileImage = session?.user?.image;
 
   const pathname = usePathname();
   useEffect(() => {
@@ -24,7 +27,7 @@ const navbar = () => {
     };
     setAuthProviders();
   }, []);
-  console.log(providers);
+
   return (
     <nav className="bg-blue-700 border-b border-blue-500">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -100,24 +103,21 @@ const navbar = () => {
           </div>
 
           {/* <!-- Right Side Menu (Logged Out) --> */}
+
           {!session && (
             <div className="hidden md:block md:ml-6">
               <div className="flex items-center">
-                <button className="flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2">
-                  <FaGoogle className="mr-2 text-white" />
-                  <span>Login or Register</span>
-                </button>
-                {/* {providers &&
+                {providers &&
                   Object.values(providers).map((provider) => (
                     <button
                       key={provider.name}
                       onClick={() => signIn(provider.id)}
-                      className='flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2 my-3'
+                      className="flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2 my-3"
                     >
-                      <FaGoogle className='text-white mr-2' />
+                      <FaGoogle className="text-white mr-2" />
                       <span>Login or Register</span>
                     </button>
-                  ))} */}
+                  ))}
               </div>
             </div>
           )}
@@ -168,7 +168,9 @@ const navbar = () => {
                     <span className="sr-only">Open user menu</span>
                     <Image
                       className="h-8 w-8 rounded-full"
-                      src={profileDefault}
+                      src={profileImage || logo}
+                      width={40}
+                      height={40}
                       alt=""
                     />
                   </button>
@@ -192,6 +194,9 @@ const navbar = () => {
                       role="menuitem"
                       tabIndex="-1"
                       id="user-menu-item-0"
+                      onClick={()=>{
+                        setProfileOpen(false);
+                      }}
                     >
                       Your Profile
                     </Link>
@@ -202,11 +207,17 @@ const navbar = () => {
                       role="menuitem"
                       tabIndex="-1"
                       id="user-menu-item-2"
+                      onClick={()=>{
+                        setProfileOpen(false);
+                      }}
                     >
                       Saved Properties
                     </Link>
 
                     <button
+                    onClick={() =>{ 
+                      setProfileOpen(false);
+                      signOut()}}
                       className="block px-4 py-2 text-sm text-gray-700"
                       role="menuitem"
                       tabIndex="-1"

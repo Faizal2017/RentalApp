@@ -6,15 +6,7 @@ const page = () => {
   return (
     <section className="px-4 py-6">
       <div className="container-xl lg:container m-auto px-4 py-6">
-        {Properties.length === 0 ? (
-          <div>No properties found</div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-            {Properties.map((property) => (
-              <PropertyCard key={property._id} property={property}/>
-            ))}
-          </div>
-        )}
+     Add properties
       </div>
     </section>
   );
