@@ -39,13 +39,74 @@ const AddForm = () => {
     is_featured: false,
   });
 
-  const handleChange = () => {};
-  const handleAmenitiesChange = () => {};
-  const handleImageChange = () => {};
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    // Handle nested fields like location.street
+    if (name.includes(".")) {
+      const [parent, child] = name.split(".");
+      setFields((prevFields) => ({
+        ...prevFields,
+        [parent]: {
+          ...prevFields[parent],
+          [child]: value,
+        },
+      }));
+    } else {
+      setFields((prevFields) => ({
+        ...prevFields,
+        [name]: value,
+      }));
+    }
+  };
+
+  const handleAmenitiesChange = (e) => {
+    const { value, checked } = e.target;
+    //clone the current array
+    const updatedAmenities = [...fields.amenities];
+    if (checked) {
+      // If checked, add the value to the array
+      updatedAmenities.push(value);
+    } else {
+      //remove the value from the array
+      const index = updatedAmenities.indexOf(value);
+
+      if (index !== -1) {
+        updatedAmenities.splice(index, 1);
+      }
+    }
+
+    //update state with updated array
+    setFields((prevFields) => ({
+      ...prevFields,
+      amenities: updatedAmenities,
+    }));
+  };
+  const handleImageChange = (e) => {
+    const { files } = e.target;
+
+    //clone images array
+    const updatesImages = [...fields.images];
+
+    //add new images to the array
+    for (const file of files) {
+      updatesImages.push(file);
+    }
+
+    //update state with updated array
+    setFields((prevFields) => ({
+      ...prevFields,
+      images: updatesImages,
+    }));
+  };
 
   return (
     mounted && (
-      <form>
+      <form
+        action="/api/properties"
+        method="POST"
+        encType="multipart/form-data"
+      >
         <h2 className="text-3xl text-center font-semibold mb-6">
           Add Property
         </h2>
@@ -449,7 +510,7 @@ const AddForm = () => {
           <input
             type="text"
             id="seller_name"
-            name="seller_info.name."
+            name="seller_info.name"
             className="border rounded w-full py-2 px-3"
             placeholder="Name"
             value={fields.seller_info.name}
@@ -470,7 +531,7 @@ const AddForm = () => {
             className="border rounded w-full py-2 px-3"
             placeholder="Email address"
             required
-             value={fields.seller_info.email}
+            value={fields.seller_info.email}
             onChange={handleChange}
           />
         </div>
@@ -487,7 +548,7 @@ const AddForm = () => {
             name="seller_info.phone"
             className="border rounded w-full py-2 px-3"
             placeholder="Phone"
-             value={fields.seller_info.phone}
+            value={fields.seller_info.phone}
             onChange={handleChange}
           />
         </div>

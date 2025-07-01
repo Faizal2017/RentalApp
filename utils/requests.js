@@ -9,7 +9,7 @@ async function fetchProperties() {
   }
 
   try {
-    const response = await fetch(`${domain}/properties`);
+    const response = await fetch(`${domain}/properties`,{cache: 'no-store'});
     if (!response.ok) {
       return new Error("Failed to fetch properties");
     }

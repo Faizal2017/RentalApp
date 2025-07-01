@@ -6,7 +6,9 @@ import { fetchProperty } from "@/utils/requests";
 import PropertyImage from "@/components/PropertyImage";
 import PropertyDeatils from "@/components/PropertyDeatils";
 import { FaArrowAltCircleLeft } from "react-icons/fa";
+import PropertImages from "@/components/PropertImages";
 import Spinner from "@/components/Spinner";
+
 const page = () => {
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -161,41 +163,7 @@ const page = () => {
             </div>
           </section>
 
-          {/* <!-- Images --> */}
-          <section className="bg-blue-50 p-4">
-            <div className="container mx-auto">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="col-span-2">
-                  <img
-                    src="./images/properties/a1.jpg"
-                    alt=""
-                    className="object-cover h-[400px] w-full rounded-xl cursor-pointer"
-                  />
-                </div>
-                <div className="col-span-2">
-                  <img
-                    src="./images/properties/a2.jpg"
-                    alt=""
-                    className="object-cover h-[400px] w-full rounded-xl cursor-pointer"
-                  />
-                </div>
-                <div className="col-span-2">
-                  <img
-                    src="./images/properties/a3.jpg"
-                    alt=""
-                    className="object-cover h-[400px] w-full rounded-xl cursor-pointer"
-                  />
-                </div>
-                <div className="col-span-2">
-                  <img
-                    src="./images/properties/a4.jpg"
-                    alt=""
-                    className="object-cover h-[400px] w-full rounded-xl cursor-pointer"
-                  />
-                </div>
-              </div>
-            </div>
-          </section>
+          <PropertImages images={property.images} />
         </>
       )}
     </>

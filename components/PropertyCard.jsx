@@ -19,7 +19,7 @@ const PropertyCard = ({ property }) => {
     <div className="group rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 relative bg-white overflow-hidden border border-gray-100 hover:border-gray-200 max-w-sm mx-auto sm:max-w-md lg:max-w-lg">
       <div className="relative overflow-hidden">
         <Image
-          src={`/images/properties/${property.images[0]}`}
+          src={property.images[0]}
           alt={property.name}
           className="w-full h-48 sm:h-56 lg:h-64 object-cover rounded-t-2xl group-hover:scale-105 transition-transform duration-300"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"

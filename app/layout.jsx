@@ -13,11 +13,7 @@ export default function RootLayout({ children }) {
     <Authprovider>
       <html lang="en">
         <head />
-        <body
-          className="min-h-screen bg-gray-100"
-          data-new-gr-c-s-check-loaded="14.1241.0"
-          data-gr-ext-installed=""
-        >
+        <body suppressHydrationWarning={true}>
           <Navbar />
           <main>{children}</main>
           <Footer />
