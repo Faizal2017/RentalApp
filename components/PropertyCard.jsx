@@ -2,7 +2,7 @@ import Image from "next/image"
 import { Bed, Bath, Ruler, MapPin, Calendar } from "lucide-react"
 import Link from "next/link";
 
-const PropertyCard = ({ property }) => {
+const  PropertyCard = ({ property }) => {
   const { rates } = property;
 
   const getRateDisplay = () => {
