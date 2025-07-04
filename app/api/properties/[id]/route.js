@@ -71,3 +71,84 @@ try{
     });
   }
 };
+
+
+//Update /api/properties/:id
+
+export const PUT = async (request,{params}) => {
+  try {
+    // Connect to the database
+    await connectDB();
+
+    const {id} = params;
+
+    // Get the session user
+    const sessionUser = await getSessionUser();
+    if (!sessionUser || !sessionUser.userId) {
+      return new Response(JSON.stringify("UserId is required"), {
+        status: 401,
+      });
+    }
+
+    //geting owner id
+    const { userId } = sessionUser;
+
+    const formData = await request.formData();
+
+    const amenities = formData.getAll("amenities");
+
+    //existing propert data
+    const existingProperty = await Property.findById(id);
+    if (!existingProperty) {
+      return new Response(JSON.stringify("Property not found"), {
+        status: 404,
+      });
+    }
+
+    // verify if the user is the owner of the property
+    if (existingProperty.owner.toString() !== userId) {
+      return new Response(JSON.stringify("Unauthorized"), {
+        status: 403,
+      });
+    }
+   
+    const propertyData = {
+      name: formData.get("name"),
+      description: formData.get("description"),
+      rates: {
+        nightly: formData.get("rates.nightly"),
+        weekly: formData.get("rates.weekly"),
+        monthly: formData.get("rates.monthly"),
+      },
+      location: {
+        street: formData.get("location.street"),
+        city: formData.get("location.city"),
+        state: formData.get("location.state"),
+        zipCode: formData.get("location.zipcode"),
+      },
+      seller_info: {
+        name: formData.get("seller_info.name"),
+        email: formData.get("seller_info.email"),
+        phone: formData.get("seller_info.phone"),
+      },
+      type: formData.get("type"),
+      beds: formData.get("beds"),
+      baths: formData.get("baths"),
+      square_feet: formData.get("square_feet"),
+      amenities: amenities,
+      //images: images,
+      owner: userId,
+    };
+
+    const updatedProperty = await Property.findByIdAndUpdate(id,propertyData)
+    return new Response(
+      JSON.stringify(updatedProperty),
+       { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error creating property:", error);
+    return new Response(JSON.stringify("Failed to create property"), {
+      status: 500,
+    });
+  }
+};

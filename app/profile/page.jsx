@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import Spinner from "@/components/Spinner";
 import Link from "next/link";
+import { toast } from "react-toastify";
 
 const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
@@ -41,18 +42,31 @@ const ProfilePage = () => {
   }, [session]);
 
   //handle delete property
-  const handleDeleteProperty = (propertyId) => {
+  const handleDeleteProperty = async (propertyId) => {
     const confirmed = window.confirm(
       "Are you sure you want to delete this property? ."
     );
     if (!confirmed) return;
 
     try {
-      const response = fetch(`/api/properties/${propertyId}`, {
+      const response = await fetch(`/api/properties/${propertyId}`, {
         method: "DELETE",
       });
+
+      if (response.status === 200) {
+        //remove the deleted property from the state
+        const updatedProperties = properties.filter(
+          (property) => property._id !== propertyId
+        );
+
+        setProperties(updatedProperties);
+       toast.success("Property deleted successfully!");
+      } else {
+        alert("Failed to delete property. Please try again.");
+      }
     } catch (error) {
       console.error("Error deleting property:", error);
+      toast.error("Failed to delete property. Please try again.");
     }
   };
   return (
