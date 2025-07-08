@@ -1,25 +1,26 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
-import logo from "@/assets/images/logo-white.png";
-import profileDefault from "@/assets/images/profile.png";
 import Link from "next/link";
 import { FaGoogle } from "react-icons/fa";
 import { getProviders, signIn, signOut, useSession } from "next-auth/react";
+import logo from "@/assets/images/logo-white.png";
+import profileDefault from "@/assets/images/profile.png";
 
-const navbar = () => {
-  // Get the current session(user Deatils)
+const Navbar = () => {
   const { data: session } = useSession();
-
   const [isMobileMenuOpen, setMobileMenu] = useState(false);
   const [profileButton, setProfileOpen] = useState(false);
   const [providers, setProviders] = useState(null);
-
+  const [location, setLocation] = useState('');
+  const [propertyType, setPropertyType] = useState('All');
+  
   const profileImage = session?.user?.image;
-
   const pathname = usePathname();
+  const router = useRouter();
+
   useEffect(() => {
     const setAuthProviders = async () => {
       const res = await getProviders();
@@ -28,18 +29,27 @@ const navbar = () => {
     setAuthProviders();
   }, []);
 
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (location === '' && propertyType === 'All') {
+      router.push('/properties');
+    } else {
+      const query = `?location=${encodeURIComponent(location)}&propertyType=${encodeURIComponent(propertyType)}`;
+      router.push(`/properties/search-results${query}`);
+    }
+  };
+
   return (
     <nav className="bg-blue-700 border-b border-blue-500">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
         <div className="relative flex h-20 items-center justify-between">
           <div className="absolute inset-y-0 left-0 flex items-center md:hidden">
-            {/* <!-- Mobile menu button--> */}
             <button
               type="button"
               id="mobile-dropdown-button"
               className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
               aria-controls="mobile-menu"
-              aria-expanded="false"
+              aria-expanded={isMobileMenuOpen}
               onClick={() => setMobileMenu((prev) => !prev)}
             >
               <span className="absolute -inset-0.5"></span>
@@ -62,38 +72,36 @@ const navbar = () => {
           </div>
 
           <div className="flex flex-1 items-center justify-center md:items-stretch md:justify-start">
-            {/* <!-- Logo --> */}
             <Link className="flex flex-shrink-0 items-center" href="/">
               <Image className="h-10 w-auto" src={logo} alt="PropertyPulse" />
-
               <span className="hidden md:block text-white text-2xl font-bold ml-2">
                 RentVibe
               </span>
             </Link>
-            {/* <!-- Desktop Menu Hidden below md screens --> */}
             <div className="hidden md:ml-6 md:block">
               <div className="flex space-x-2">
                 <Link
                   href="/"
-                  className={` ${
+                  className={`${
                     pathname === "/" ? "bg-black" : ""
-                  } text-white  hover:bg-gray-900 hover:text-white rounded-md px-3 py-2 `}
+                  } text-white hover:bg-blue-800 hover:text-white rounded-md text-md font-semibold px-5 py-2 transition duration-200`}
                 >
                   Home
                 </Link>
                 <Link
                   href="/properties"
-                  className="text-white hover:bg-gray-900 hover:text-white rounded-md px-3 py-2"
+                  className={`${
+                    pathname === "/properties" ? "bg-black" : ""
+                  } text-white hover:bg-blue-800 hover:text-white rounded-md text-md font-semibold px-5 py-2 transition duration-200`}
                 >
                   Properties
                 </Link>
-
                 {session && (
                   <Link
                     href="/properties/add"
-                    className={` ${
-                      pathname === "/Properties/add" ? "bg-black" : ""
-                    } text-white  hover:bg-gray-900 hover:text-white rounded-md px-3 py-2 `}
+                    className={`${
+                      pathname === "/properties/add" ? "bg-black" : ""
+                    } text-white hover:bg-blue-800 hover:text-white rounded-md text-md font-semibold px-5 py-2 transition duration-200`}
                   >
                     Add Property
                   </Link>
@@ -102,33 +110,78 @@ const navbar = () => {
             </div>
           </div>
 
-          {/* <!-- Right Side Menu (Logged Out) --> */}
-
-          {!session && (
-            <div className="hidden md:block md:ml-6">
-              <div className="flex items-center">
-                {providers &&
-                  Object.values(providers).map((provider) => (
-                    <button
-                      key={provider.name}
-                      onClick={() => signIn(provider.id)}
-                      className="flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2 my-3"
-                    >
-                      <FaGoogle className="text-white mr-2" />
-                      <span>Login or Register</span>
-                    </button>
-                  ))}
-              </div>
+          {pathname !== "/" && pathname !== "/profile" && pathname !== "/properties/add" && (
+            <div className="hidden md:flex md:items-center md:ml-6">
+              <form
+                onSubmit={handleSearchSubmit}
+                className="flex items-center space-x-2 w-full max-w-md"
+              >
+                <div className="flex-1">
+                  <label htmlFor="location" className="sr-only">
+                    Location
+                  </label>
+                  <input
+                    type="text"
+                    id="location"
+                    placeholder="Enter Keywords"
+                    className="w-full px-4 py-2 rounded-lg bg-white text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:shadow-md transition duration-200 transform hover:scale-[1.02]"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                  />
+                </div>
+                <div className="w-32">
+                  <label htmlFor="property-type" className="sr-only">
+                    Property Type
+                  </label>
+                  <select
+                    id="property-type"
+                    className="w-full px-4 py-2 rounded-lg bg-white text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:shadow-md transition duration-200 transform hover:scale-[1.02]"
+                    value={propertyType}
+                    onChange={(e) => setPropertyType(e.target.value)}
+                  >
+                    <option value="All">All</option>
+                    <option value="Apartment">Apartment</option>
+                    <option value="Studio">Studio</option>
+                    <option value="Condo">Condo</option>
+                    <option value="House">House</option>
+                    <option value="Cabin Or Cottage">Cabin or Cottage</option>
+                    <option value="Loft">Loft</option>
+                    <option value="Room">Room</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-medium hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:shadow-md transition duration-200 transform hover:scale-[1.02]"
+                >
+                  Search
+                </button>
+              </form>
             </div>
           )}
 
-          {/* <!-- Right Side Menu (Logged In) --> */}
+          {!session && (
+            <div className="hidden md:flex md:items-center md:ml-4">
+              {providers &&
+                Object.values(providers).map((provider) => (
+                  <button
+                    key={provider.name}
+                    onClick={() => signIn(provider.id)}
+                    className="flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-lg px-4 py-2 text-sm font-medium transition duration-200"
+                  >
+                    <FaGoogle className="text-white mr-2" />
+                    <span>Login or Register</span>
+                  </button>
+                ))}
+            </div>
+          )}
+
           {session && (
-            <div className="absolute inset-y-0 right-0 flex items-center pr-2 md:static md:inset-auto md:ml-6 md:pr-0">
-              <Link href="messages.html" className="relative group">
+            <div className="absolute inset-y-0 right-0 flex items-center pr-2 md:static md:inset-auto md:ml-4 md:pr-0">
+              <Link href="/messages" className="relative group">
                 <button
                   type="button"
-                  className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                  className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 transition duration-200"
                 >
                   <span className="absolute -inset-1.5"></span>
                   <span className="sr-only">View notifications</span>
@@ -149,38 +202,33 @@ const navbar = () => {
                 </button>
                 <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
                   2
-                  {/* <!-- Replace with the actual number of notifications --> */}
                 </span>
               </Link>
-              {/* <!-- Profile dropdown button --> */}
 
               <div className="relative ml-3">
-                <div>
-                  <button
-                    type="button"
-                    className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                    id="user-menu-button"
-                    aria-expanded="false"
-                    aria-haspopup="true"
-                    onClick={() => setProfileOpen((prev) => !prev)}
-                  >
-                    <span className="absolute -inset-1.5"></span>
-                    <span className="sr-only">Open user menu</span>
-                    <Image
-                      className="h-8 w-8 rounded-full"
-                      src={profileImage || logo}
-                      width={40}
-                      height={40}
-                      alt=""
-                    />
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 transition duration-200"
+                  id="user-menu-button"
+                  aria-expanded={profileButton}
+                  aria-haspopup="true"
+                  onClick={() => setProfileOpen((prev) => !prev)}
+                >
+                  <span className="absolute -inset-1.5"></span>
+                  <span className="sr-only">Open user menu</span>
+                  <Image
+                    className="h-8 w-8 rounded-full"
+                    src={profileImage || profileDefault}
+                    width={40}
+                    height={40}
+                    alt=""
+                  />
+                </button>
 
-                {/* <!-- Profile dropdown --> */}
                 {profileButton && (
                   <div
                     id="user-menu"
-                    className=" absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                    className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                     role="menu"
                     aria-orientation="vertical"
                     aria-labelledby="user-menu-button"
@@ -189,36 +237,31 @@ const navbar = () => {
                     <Link
                       href="/profile"
                       className={`${
-                        pathname === "/profile" ? "bg-black" : " "
-                      }  lock px-4 py-2 text-sm text-gray-700`}
+                        pathname === "/profile" ? "bg-gray-100" : ""
+                      } block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition duration-200`}
                       role="menuitem"
                       tabIndex="-1"
                       id="user-menu-item-0"
-                      onClick={()=>{
-                        setProfileOpen(false);
-                      }}
+                      onClick={() => setProfileOpen(false)}
                     >
                       Your Profile
                     </Link>
-
                     <Link
                       href="/properties/saved"
-                      className="block px-4 py-2 text-sm text-gray-700"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition duration-200"
                       role="menuitem"
                       tabIndex="-1"
-                      id="user-menu-item-2"
-                      onClick={()=>{
-                        setProfileOpen(false);
-                      }}
+                      id="user-menu-item-1"
+                      onClick={() => setProfileOpen(false)}
                     >
                       Saved Properties
                     </Link>
-
                     <button
-                    onClick={() =>{ 
-                      setProfileOpen(false);
-                      signOut()}}
-                      className="block px-4 py-2 text-sm text-gray-700"
+                      onClick={() => {
+                        setProfileOpen(false);
+                        signOut();
+                      }}
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition duration-200"
                       role="menuitem"
                       tabIndex="-1"
                       id="user-menu-item-2"
@@ -233,42 +276,96 @@ const navbar = () => {
         </div>
       </div>
 
-      {/* <!-- Mobile menu, show/hide based on menu state. --> */}
       {isMobileMenuOpen && (
-        <div id="mobile-menu">
-          <div className="space-y-1 px-2 pb-3 pt-2">
+        <div id="mobile-menu" className="md:hidden bg-blue-700">
+          <div className="space-y-2 px-2 pb-3 pt-2">
+            {pathname !== "/" && pathname !== "/profile" && pathname !== "/properties/add" && (
+              <form
+                onSubmit={handleSearchSubmit}
+                className="flex flex-col space-y-3 px-3 py-3 bg-blue-800 rounded-lg"
+              >
+                <div>
+                  <label htmlFor="mobile-location" className="sr-only">
+                    Location
+                  </label>
+                  <input
+                    type="text"
+                    id="mobile-location"
+                    placeholder="Enter Keywords"
+                    className="w-full px-4 py-2 rounded-lg bg-white text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:shadow-md transition duration-200"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="mobile-property-type" className="sr-only">
+                    Property Type
+                  </label>
+                  <select
+                    id="mobile-property-type"
+                    className="w-full px-4 py-2 rounded-lg bg-white text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:shadow-md transition duration-200"
+                    value={propertyType}
+                    onChange={(e) => setPropertyType(e.target.value)}
+                  >
+                    <option value="All">All</option>
+                    <option value="Apartment">Apartment</option>
+                    <option value="Studio">Studio</option>
+                    <option value="Condo">Condo</option>
+                    <option value="House">House</option>
+                    <option value="Cabin Or Cottage">Cabin or Cottage</option>
+                    <option value="Loft">Loft</option>
+                    <option value="Room">Room</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <button
+                  type="submit"
+                  className="w-full px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-medium hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-200"
+                >
+                  Search
+                </button>
+              </form>
+            )}
             <Link
               href="/"
-              className={` ${
-                pathname === "/" ? "bg-black" : " "
-              }  text-white block rounded-md px-3 py-2 text-base font-medium `}
+              className={`${
+                pathname === "/" ? "bg-blue-800" : ""
+              } text-white block rounded-lg px-4 py-2 text-base font-medium hover:bg-blue-800 transition duration-200`}
             >
               Home
             </Link>
-
             <Link
               href="/properties"
-              className={` ${
-                pathname === "/properties" ? "bg-black" : " "
-              }  text-white block rounded-md px-3 py-2 text-base font-medium `}
+              className={`${
+                pathname === "/properties" ? "bg-blue-800" : ""
+              } text-white block rounded-lg px-4 py-2 text-base font-medium hover:bg-blue-800 transition duration-200`}
             >
               Properties
             </Link>
             {session && (
               <Link
                 href="/properties/add"
-                className={` ${
-                  pathname === "/properties/add" ? "bg-black" : " "
-                }  text-white block rounded-md px-3 py-2 text-base font-medium `}
+                className={`${
+                  pathname === "/properties/add" ? "bg-blue-800" : ""
+                } text-white block rounded-lg px-4 py-2 text-base font-medium hover:bg-blue-800 transition duration-200`}
               >
                 Add Property
               </Link>
             )}
             {!session && (
-              <button className="flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2 my-5">
-                <FaGoogle className="mr-2 text-white" />
-                <span>Login or Register</span>
-              </button>
+              <div className="px-3 py-2">
+                {providers &&
+                  Object.values(providers).map((provider) => (
+                    <button
+                      key={provider.name}
+                      onClick={() => signIn(provider.id)}
+                      className="flex items-center text-white bg-gray-700 hover:bg-gray-900 rounded-lg px-4 py-2 text-sm font-medium w-full transition duration-200"
+                    >
+                      <FaGoogle className="mr-2 text-white" />
+                      <span>Login or Register</span>
+                    </button>
+                  ))}
+              </div>
             )}
           </div>
         </div>
@@ -277,4 +374,4 @@ const navbar = () => {
   );
 };
 
-export default navbar;
+export default Navbar;
