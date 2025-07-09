@@ -80,12 +80,25 @@ export const GET = async () => {
     }
     const { userId } = sessionUser;
 
-    console.log("UserId:", userId);
-    const messages = await Message.find({
+    //fetching messages for the user
+    const UnReadMessages = await Message.find({
       recipient: userId,
+      read: false,
     })
+      .sort({ createdAt: -1 }) //filter upto new date
       .populate("sender", "username")
       .populate("property", "name");
+
+    const ReadMessages = await Message.find({
+      recipient: userId,
+      read: true,
+    })
+      .sort({ createdAt: -1 }) //filter upto new date
+      .populate("sender", "username")
+      .populate("property", "name");
+
+      //combine both read and unread messages
+    const messages = [...UnReadMessages, ...ReadMessages];  
 
     return new Response(JSON.stringify(messages), {
       status: 200,

@@ -28,7 +28,7 @@ const Message = () => {
       }
     };
     fetchMessages();
-    console.log("mesg",messages)
+    console.log("mesg", messages);
   }, []);
 
   return loading ? (

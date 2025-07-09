@@ -1,9 +1,14 @@
 "use client";
+import { set } from "mongoose";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
+import { useGlobalContext } from "@/context/GlobalContext";
 
 const MessageBox = ({ message }) => {
   const [isRead, setIsRead] = useState(message.read);
+  const [isdeleted, setisDeleted] = useState(false);
+
+  const { setCount } = useGlobalContext();
 
   const handleReadClick = async () => {
     try {
@@ -14,6 +19,7 @@ const MessageBox = ({ message }) => {
       if (res.status === 200) {
         const { read } = await res.json();
         setIsRead(read);
+        setCount((prevCount) => (read ? prevCount - 1 : prevCount + 1));
         if (read) {
           toast.success("Message marked as read");
         } else {
@@ -28,6 +34,27 @@ const MessageBox = ({ message }) => {
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      const res = await fetch(`/api/messages/${message._id}`, {
+        method: "DELETE",
+      });
+      if (res.status === 200) {
+        setisDeleted(true);
+        setCount((prevCount) => prevCount - 1);
+
+        toast.success("Message deleted successfully");
+      } else {
+        toast.error("Failed to delete message");
+      }
+    } catch (error) {
+      toast.error("Error deleting message. Please try again later.");
+      console.error("Error deleting message:", error);
+    }
+  };
+  if (isdeleted) {
+    return null; // Don't render anything if the message is deleted
+  }
   return (
     <div className="relative bg-white p-4 rounded-md shadow-md border border-gray-200">
       {!isRead && (
@@ -73,7 +100,10 @@ const MessageBox = ({ message }) => {
       >
         {isRead ? " Mark as New" : "Mark as Read"}
       </button>
-      <button className="mt-4 bg-red-500 text-white py-1 px-3 rounded-md">
+      <button
+        onClick={handleDelete}
+        className="mt-4 bg-red-500 text-white py-1 px-3 rounded-md"
+      >
         Delete
       </button>
     </div>
