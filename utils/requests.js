@@ -1,15 +1,17 @@
 const domain = process.env.NEXT_PUBLIC_API_DOMAIN || null;
 
 //to get properties from the API
-async function fetchProperties() {
-
+async function fetchProperties({ showFeatured = false } = {}) {
   //handle the case when domain is not set
   if (!domain) {
     return [];
   }
 
   try {
-    const response = await fetch(`${domain}/properties`,{cache: 'no-store'});
+    const response = await fetch(
+      `${domain}/properties${showFeatured ? "/featured" : ""}`,
+      { cache: "no-store" }
+    );
     if (!response.ok) {
       return new Error("Failed to fetch properties");
     }
@@ -20,10 +22,8 @@ async function fetchProperties() {
   }
 }
 
-
 //to get single properties from the API
 async function fetchProperty(id) {
-    
   //handle the case when domain is not set
   if (!domain) {
     return null;
@@ -40,4 +40,4 @@ async function fetchProperty(id) {
   }
 }
 
-export { fetchProperties , fetchProperty };
+export { fetchProperties, fetchProperty };

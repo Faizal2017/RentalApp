@@ -8,11 +8,24 @@ export const GET = async (request) => {
   // Connect to the database
   await connectDB();
 
+  //filter pagination
+  const page = request.nextUrl.searchParams.get("page") || 1;
+  const pageSize = request.nextUrl.searchParams.get("pageSize") || 6;
+
+  const skip = (page - 1) * pageSize;
+
+  const total = await Property.countDocuments({});
+
+
   // Fetch all properties from the database
-  const properties = await Property.find({});
+  const properties = await Property.find({}).skip(skip).limit(pageSize)
+
+const result ={
+  total,properties
+}
 
   // Return a response
-  return new Response(JSON.stringify(properties), {
+  return new Response(JSON.stringify(result), {
     status: 200,
   });
 };

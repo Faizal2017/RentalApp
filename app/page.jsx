@@ -2,6 +2,7 @@ import InforBoxes from "@/components/InforBoxes";
 import Hero from "@/components/Hero";
 import HomeProperties from "@/components/HomeProperties";
 import { connectDB } from "@/config/database";
+import FeaturedProperties from "@/components/FeaturedProperties";
 
 export const metadata = {
   title: 'Homepage',
@@ -16,7 +17,9 @@ const  Homepage = async ()=> {
     <>
      <Hero/>
      <InforBoxes/>
+     <FeaturedProperties/>
      <HomeProperties/>
+
     </>
   );
 };
