@@ -428,7 +428,7 @@ const AddForm = () => {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="space-y-2">
                       <label htmlFor="weekly_rate" className="block text-sm font-semibold text-gray-700">
-                        📅 Weekly Rate ($)
+                        📅 Weekly Rate (Rs)
                       </label>
                       <input
                         type="number"
@@ -442,7 +442,7 @@ const AddForm = () => {
                     </div>
                     <div className="space-y-2">
                       <label htmlFor="monthly_rate" className="block text-sm font-semibold text-gray-700">
-                        🗓️ Monthly Rate ($)
+                        🗓️ Monthly Rate (Rs)
                       </label>
                       <input
                         type="number"
@@ -456,7 +456,7 @@ const AddForm = () => {
                     </div>
                     <div className="space-y-2">
                       <label htmlFor="nightly_rate" className="block text-sm font-semibold text-gray-700">
-                        🌙 Nightly Rate ($)
+                        🌙 Nightly Rate (Rs)
                       </label>
                       <input
                         type="number"
