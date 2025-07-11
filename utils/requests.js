@@ -9,7 +9,7 @@ async function fetchProperties({ showFeatured = false } = {}) {
 
   try {
     const response = await fetch(
-      `/api/properties${showFeatured ? "/featured" : ""}`,
+      `${domain}/properties${showFeatured ? "/featured" : ""}`,
       { cache: "no-store" }
     );
     if (!response.ok) {
@@ -29,7 +29,7 @@ async function fetchProperty(id) {
     return null;
   }
   try {
-    const response = await fetch(`/api/properties/${id}`);
+    const response = await fetch(`${domain}/properties/${id}`);
     if (!response.ok) {
       throw new Error("Failed to fetch properties");
     }
