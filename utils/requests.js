@@ -10,7 +10,7 @@ async function fetchProperties({ showFeatured = false } = {}) {
   try {
     const response = await fetch(
       `${domain}/properties${showFeatured ? "/featured" : ""}`,
-      { cache: "no-store" }
+      { next: { revalidate: 60 } }
     );
     if (!response.ok) {
       return new Error("Failed to fetch properties");
